@@ -1,0 +1,8 @@
+detect_logo: False
+quality: 20
+preset: "slow"
+delete_files: True
+codec: "x264"
+shutdown: False
+replace_stereo: False
+endings: [".mkv", ".ts"]
