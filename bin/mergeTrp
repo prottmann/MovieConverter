@@ -1,0 +1,14 @@
+#!/usr/bin/env python3
+
+from PyQt6.QtWidgets import QApplication
+from gui.file_chooser import FileChooser
+import sys
+
+if __name__ == '__main__':
+    from misc.file_merger import FileMerger
+    app = QApplication(sys.argv)
+    chooser = FileChooser()
+    file_path = chooser.getPaths(1)
+    if chooser.validPaths(1):
+        merger = FileMerger()
+        merger.merge(file_path)

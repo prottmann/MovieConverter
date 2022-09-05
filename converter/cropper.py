@@ -14,59 +14,31 @@ import pdb
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 
+from typing import Any
+from dataclasses import dataclass
+
 plt.ion()
 
 import time
 
 
+@dataclass(init=True)
 class DataBaseEntry(object):
     """docstring for DataBaseEntry"""
-
-    def __init__(self, img_size, logo_box=None, logo_cut=None, logo_name=None):
-        self.img_size = img_size
-        self.logo_box = logo_box
-        self.logo_cut = logo_cut
-        self.logo_name = logo_name
-
-    def __str__(self):
-        string = f"Name: {self.logo_name}, Width: {self.width}, "+\
-            f"Height: {self.height}"
-        return string
+    img_size: Any
+    logo_box: np.array = None
+    logo_cut: np.array = None
+    logo_name: str = None
 
 
+@dataclass(init=True)
 class CropOptions(object):
     """docstring for CropOptions"""
-
-    def __init__(self,
-                 vert_size=None,
-                 hor_size=None,
-                 vert_offset=None,
-                 hor_offset=None,
-                 logo_box=None):
-        self.vert_size = vert_size
-        self.hor_size = hor_size
-        self.vert_offset = vert_offset
-        self.hor_offset = hor_size
-        self.logo_box = logo_box
-
-    def set_logo(self, logo_box):
-        self.logo_box = logo_box
-
-    def set_crop_opts(self,
-                      vert_size=None,
-                      hor_size=None,
-                      vert_offset=None,
-                      hor_offset=None):
-        self.vert_size = vert_size
-        self.hor_size = hor_size
-        self.vert_offset = vert_offset
-        self.hor_offset = hor_size
-
-    def __str__(self):
-        string = f"W: {self.hor_size}, H: {self.vert_size}, "+\
-            f"w_off: {self.hor_offset}, h_off: {self.vert_offset}, "+ \
-            f"LogoBox: {self.logo_box}"
-        return string
+    vert_size: int = None
+    hor_size: int = None
+    vert_offset: int = None
+    hor_size: int = None
+    logo_box: Any = None
 
 
 class Cropper(object):

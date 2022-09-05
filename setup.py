@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 from setuptools import setup, find_packages
 from pathlib import Path
@@ -19,13 +19,6 @@ setup(
     python_requires=">=3.9",
     packages=find_packages(),
     install_requires=required,
-    entry_points={
-        "console_scripts": [
-            "converter=converter.starts:startGui",
-            "converter-default=converter.starts:startDefaults",
-            "merger=converter.starts:startMerger"
-        ]
-    },
-    #scripts=["converter.__main__"],
+    scripts=["bin/converter", "bin/mergeTrp"],
     license='MIT',
 )

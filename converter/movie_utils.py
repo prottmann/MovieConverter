@@ -88,7 +88,9 @@ class MovieInfo(object):
     def getCropString(self):
         """ TODO Add deinterlace command in case of interlaced DVD
     """
+        print("Loading Cropfile.")
         self.crop = pickle.load(open(self.cropFile, "rb"))
+        print(self.crop)
         logo_filter = ""
         if self.crop.logo_box is not None:
             bonus = 2
@@ -129,8 +131,6 @@ class MovieInfo(object):
 
     def process(self, params):
         print(self)
-        print("Loading Cropfile.")
-
         crop_filter = "" if params.replace_stereo else self.getCropString()
         color_string = self.getColorString()
         codec = self.getCodec(params)

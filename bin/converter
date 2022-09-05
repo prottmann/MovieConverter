@@ -1,0 +1,32 @@
+#!/usr/bin/env python3
+
+import sys
+from PyQt6.QtWidgets import QApplication
+import argparse
+
+if __name__ == "__main__":
+    from gui.gui import App
+    parser = argparse.ArgumentParser(description='MovieConverter')
+    parser.add_argument("-d",
+                        "--defaults",
+                        help="run the process with default parameters",
+                        action="store_true",
+                        required=False)
+    args = parser.parse_args()
+
+    app = QApplication(sys.argv)
+    if not args.defaults:
+        w = App()
+        sys.exit(app.exec())
+
+    else:
+        from converter.main import execute
+        from converter.movie_utils import MovieOpts
+        from gui.file_chooser import FileChooser
+
+        params = MovieOpts(False)
+        print(params)
+        chooser = FileChooser()
+        file_path, target_path = chooser.getPaths()
+        if chooser.validPaths():
+            execute(file_path, target_path, params)
