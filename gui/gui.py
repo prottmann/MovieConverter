@@ -11,7 +11,6 @@ from gui.file_chooser import FileChooser
 
 
 class App(QMainWindow):
-
     def __init__(self):
         super().__init__()
 
@@ -44,7 +43,6 @@ class App(QMainWindow):
 
 
 class Gui(QWidget):
-
     def __init__(self):
         super().__init__()
         self.initUI()
@@ -152,7 +150,7 @@ class Gui(QWidget):
             error_dialog.showMessage("No File-endings given!")
             error_dialog.exec()
             return
-        chooser = FileChooser(params)
+        chooser = FileChooser()
         file_path, target_path = chooser.getPaths()
         if chooser.validPaths():
             execute(file_path, target_path, params)
