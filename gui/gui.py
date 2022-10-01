@@ -1,8 +1,9 @@
 #!/usr/bin/python
 
-import sys
-from PyQt6.QtCore import Qt
-from PyQt6.QtWidgets import *
+from PyQt6.QtWidgets import (QMainWindow, QMessageBox, QWidget, QTabWidget,
+                             QVBoxLayout, QHBoxLayout, QPushButton,
+                             QApplication, QCheckBox, QLabel, QComboBox,
+                             QLineEdit, QErrorMessage)
 from PyQt6.QtGui import QIntValidator
 
 from converter.movie_utils import MovieOpts
@@ -86,7 +87,7 @@ class Gui(QWidget):
 
     def initSettings(self):
         vbox = QVBoxLayout()
-        #vbox.addStretch(1)
+        # vbox.addStretch(1)
 
         hbox = QHBoxLayout()
         hbox.addWidget(QLabel("Encoder:"))
