@@ -35,7 +35,7 @@ class MovieOpts(object):
             p = yaml.load(file, Loader=yaml.FullLoader)
             for key, value in p.items():
                 setattr(self, key, value)
-                #self.[key] = p[key]
+                # self.[key] = p[key]
 
 
 class MovieInfo(object):
@@ -78,8 +78,9 @@ class MovieInfo(object):
     def loadJson(self, json_filename: str):
         if not os.path.isfile(json_filename):
             logLevel = "-loglevel 8"
-            os.system(f'ffprobe {logLevel} -i "{self.filename}" ' + \
-                f'-show_streams -show_format -print_format json > "{json_filename}"')
+            os.system(f'ffprobe {logLevel} -i "{self.filename}" ' +
+                      '-show_streams -show_format' +
+                      f' -print_format json > "{json_filename}"')
         with open(json_filename, "r") as f:
             loaded_json = json.load(f)
         os.remove(json_filename)
@@ -92,19 +93,21 @@ class MovieInfo(object):
         self.crop = pickle.load(open(self.cropFile, "rb"))
         print(self.crop)
         logo_filter = ""
+        """
         if self.crop.logo_box is not None:
             bonus = 2
             self.crop.logo_box = self.crop.logo_box + 2 * np.array(
                 [-1, -1, 2, 2])
-            logo_filter = f"delogo=x={logo_box[0]}:y={logo_box[1]}:"+\
-            f"w={logo_box[2]}:h={logo_box[3]},"
-
-        crop_filter = f'-filter:v:0 "{logo_filter}crop={self.crop.hor_size}:'+\
-          f'{self.crop.vert_size}:{self.crop.hor_offset}:{self.crop.vert_offset}"'
+            logo_filter = f"delogo=x={logo_box[0]}:y={logo_box[1]}:" +
+                f"w={logo_box[2]}:h={logo_box[3]},"
+        """
+        crop_filter = f'-filter:v:0 "{logo_filter}crop=' +\
+            f'{self.crop.hor_size}:{self.crop.vert_size}:' +\
+            f'{self.crop.hor_offset}:{self.crop.vert_offset}"'
         return crop_filter
 
     def getColorString(self):
-        #bt601 = "-colorspace 1 -color_trc 1 -color_primaries 1"
+        # bt601 = "-colorspace 1 -color_trc 1 -color_primaries 1"
         bt709 = "-colorspace 1 -color_trc 1 -color_primaries 1"
         for stream in self.streamJson["streams"]:
             if "video" == stream["codec_type"]:
@@ -122,11 +125,17 @@ class MovieInfo(object):
         if params.replace_stereo:
             return "copy"
         elif params.codec == "x264":
-            return f'libx264 -tune film -x264-params "aq-mode=3:keyint=240" -crf {params.quality} -preset {params.preset} -pix_fmt yuv420p'
+            return 'libx264 -tune film -x264-params "aq-mode=3:keyint=240"' +\
+                f' -crf {params.quality} -preset {params.preset} ' +\
+                '-pix_fmt yuv420p'
         elif params.codec == "x265":
-            return f'libx265 -x265-params "no-sao=1:aq-mode=3:ctu=32" -crf {params.quality} -preset {params.preset} -pix_fmt yuv420p10le'
+            return 'libx265 -x265-params "no-sao=1:aq-mode=3:ctu=32" ' +\
+                f'-crf {params.quality} -preset {params.preset} ' +\
+                '-pix_fmt yuv420p10le'
         elif params.codec == "svt-av1":
-            return f'libsvtav1 -svtav1-params "preset={params.preset}:crf={params.quality}:keyint=240:film-grain=6:tune=0" -pix_fmt yuv420p10le'
+            return f'libsvtav1 -svtav1-params "preset={params.preset}:' +\
+                f'crf={params.quality}:keyint=240:film-grain=6:tune=0" ' +\
+                '-pix_fmt yuv420p10le'
         raise NotImplementedError
 
     def process(self, params):
@@ -138,13 +147,14 @@ class MovieInfo(object):
         # Create Map string
         map_str, move = map_sound(self, params.replace_stereo)
 
-        #print(map_str)
+        # print(map_str)
         logLevel = "-loglevel error -stats -hide_banner"
-        #allgOptions = f"-crf {params['quality']} -preset {params['preset']} {map_str}"
+        # allgOptions = f"-crf {params['quality']}
+        # -preset {params['preset']} {map_str}"
 
         command = f'ffmpeg {logLevel} {self.overwrite} ' + \
-        f'-i "{self.filename}" {map_str} -c:v {codec} ' + \
-        f'{color_string} {crop_filter} "{self.getOutputName()}"'
+            f'-i "{self.filename}" {map_str} -c:v {codec} ' + \
+            f'{color_string} {crop_filter} "{self.getOutputName()}"'
 
         print(command)
         os.system(command)

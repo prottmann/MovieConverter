@@ -56,11 +56,11 @@ class Cropper(object):
             return
         if not os.path.isfile(self.movie.temp_vid_name):
             command = f"ffmpeg {logLevel} {self.movie.overwrite} -ss 300 " +\
-              f"-i \"{self.movie.filename}\" -t 120 -c:v copy -preset fast " +\
-              f"-r 1 -c:a copy -c:s copy \"{self.movie.temp_vid_name}\""
+                f"-i \"{self.movie.filename}\" -t 120 -c:v copy -preset fast " +\
+                f"-r 1 -c:a copy -c:s copy \"{self.movie.temp_vid_name}\""
 
             os.system(command)
-            #print(command)
+            # print(command)
 
         self.get_crop_size()
         pickle.dump(self.crop_opts, open(self.movie.cropFile, "wb"))
@@ -68,7 +68,7 @@ class Cropper(object):
 
     def get_crop_size(self):
         vidcap = cv2.VideoCapture(self.movie.temp_vid_name)
-        #create_Features(self.movie.temp_vid_name)
+        # create_Features(self.movie.temp_vid_name)
         success, image = vidcap.read()
         while not success:
             success, image = vidcap.read()
@@ -132,15 +132,13 @@ class Cropper(object):
             if count > 500:
                 break
 
-        #pdb.set_trace()
+        # pdb.set_trace()
 
         self.f = f / f.max()
 
         if self.params.detect_logo:
             self.logo = logo / logo.max()
-            plt.imshow(self.logo)
-            plt.show()
-            crop = self.detect_logo()
+            self.crop = self.detect_logo()
         else:
             self.crop = None
 
@@ -150,15 +148,15 @@ class Cropper(object):
     def detect_vert_hor_crop(self, f):
         v = np.absolute(np.diff(np.mean(f, axis=1)))
         plt.plot(v)
-        self.crop_opts.vert_size, self.crop_opts.vert_offset = self.detect_crop(
-            0.6, v)
+        self.crop_opts.vert_size, self.crop_opts.vert_offset = \
+            self.detect_crop(0.6, v)
 
         h = np.absolute(np.diff(np.mean(
             f, axis=0))) * f.shape[0] / self.crop_opts.vert_size
         plt.plot(h)
         self.crop_opts.hor_size, self.crop_opts.hor_offset = self.detect_crop(
             0.6, h)
-        #self.plotDetectedCrop(f)
+        # self.plotDetectedCrop(f)
         print(self.crop_opts)
 
     def detect_crop(self, threshold, vector):
