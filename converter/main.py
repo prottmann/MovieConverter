@@ -8,8 +8,6 @@ from converter.cropper import Cropper
 
 import matplotlib.pyplot as plt
 
-plt.ion()
-
 
 def execute(file_path, target_path, params):
     movies = get_movies(file_path, target_path, params.endings)

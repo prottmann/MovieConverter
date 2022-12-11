@@ -8,6 +8,7 @@ from PyQt6.QtGui import QIntValidator
 from converter.movie_utils import MovieOpts
 from converter.main import execute
 from gui.file_chooser import FileChooser
+import threading
 
 
 class App(QMainWindow):
@@ -153,7 +154,10 @@ class Gui(QWidget):
         chooser = FileChooser()
         file_path, target_path = chooser.getPaths()
         if chooser.validPaths():
-            execute(file_path, target_path, params)
+            thread = threading.Thread(target=execute,
+                                      args=(file_path, target_path, params))
+            thread.start()
+            # execute(file_path, target_path, params)
 
     def preparePresets(self):
         if "x" in self.enc.currentText():

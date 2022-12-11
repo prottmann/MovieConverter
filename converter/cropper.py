@@ -17,8 +17,6 @@ import matplotlib.patches as patches
 from typing import Any
 from dataclasses import dataclass
 
-plt.ion()
-
 import time
 
 
@@ -43,7 +41,6 @@ class CropOptions(object):
 
 class Cropper(object):
     """docstring for Cropper"""
-
     def __init__(self, movie=None, params=None):
         self.movie = movie
         self.crop_opts = CropOptions()
@@ -75,22 +72,59 @@ class Cropper(object):
         success, image = vidcap.read()
         while not success:
             success, image = vidcap.read()
-        f = movie_utils.rgb2gray(image)
+
+        f = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+
+        # Initiate ORB detector
+        orb = cv2.ORB_create()
         if self.params.detect_logo:
-            rect, logo = cv2.adaptiveThreshold(f, 255,
-                                               cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
-                                               cv2.THRESH_BINARY, 201, 10)
+            # find the keypoints and descriptors with ORB
+            kp1, des1 = orb.detectAndCompute(f, None)
+            logo = cv2.adaptiveThreshold(f, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
+                                         cv2.THRESH_BINARY, 201, 10)
         count = 0
         while success:
             success, image = vidcap.read()
             if not success:
                 break
-            frame = movie_utils.rgb2gray(image).astype(np.uint8)
+            frame = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
             if self.params.detect_logo:
+                kp2, des2 = orb.detectAndCompute(frame, None)
                 l = cv2.adaptiveThreshold(frame, 255,
                                           cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
                                           cv2.THRESH_BINARY, 201, 10)
+                # create BFMatcher object
+                bf = cv2.BFMatcher(cv2.NORM_HAMMING, crossCheck=True)
+                # Match descriptors.
+                matches = bf.match(des1, des2)
+                # Sort them in the order of their distance.
+                matches = sorted(matches, key=lambda x: x.distance)
+                i = 0
+                for idx, m in enumerate(matches):
+                    if m.distance > 0:
+                        i = idx
+                        break
+                matches = matches[:i]
+                # Draw first 10 matches.
+                img3 = cv2.drawMatches(
+                    f,
+                    kp1,
+                    frame,
+                    kp2,
+                    matches,
+                    None,
+                    flags=cv2.DrawMatchesFlags_NOT_DRAW_SINGLE_POINTS)
+
+                # Extract location of good matches
+                points1 = np.zeros((len(matches), 2), dtype=np.float32)
+                points2 = np.zeros((len(matches), 2), dtype=np.float32)
+                for i, match in enumerate(matches):
+                    points1[i, :] = kp1[match.queryIdx].pt
+                    points2[i, :] = kp2[match.trainIdx].pt
+                print(points1, points2)
+                plt.imshow(img3), plt.show()
+
                 logo = logo + l
 
             f = f + frame
@@ -104,6 +138,8 @@ class Cropper(object):
 
         if self.params.detect_logo:
             self.logo = logo / logo.max()
+            plt.imshow(self.logo)
+            plt.show()
             crop = self.detect_logo()
         else:
             self.crop = None
