@@ -101,9 +101,18 @@ class MovieInfo(object):
             logo_filter = f"delogo=x={logo_box[0]}:y={logo_box[1]}:" +
                 f"w={logo_box[2]}:h={logo_box[3]},"
         """
-        crop_filter = f'-filter:v:0 "{logo_filter}crop=' +\
+        interlace = ""
+        for stream in self.streamJson["streams"]:
+            print(stream)
+            if "codec_type" in stream and "video" in stream["codec_type"]:
+                if "field_order" in stream and \
+                    stream["field_order"] in ("tt","bt","tb"):
+                    interlace = "yadif,"
+                break
+        crop_filter = f'-filter:v:0 "{interlace}{logo_filter}crop=' +\
             f'{self.crop.hor_size}:{self.crop.vert_size}:' +\
             f'{self.crop.hor_offset}:{self.crop.vert_offset}"'
+
         return crop_filter
 
     def getColorString(self):
