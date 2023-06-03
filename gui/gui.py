@@ -139,7 +139,7 @@ class Gui(QWidget):
         params.preset = self.preset.currentText()
         params.delete_files = self.delete.isChecked()
         params.shutdown = self.shutdown.isChecked()
-        params.replaceStereo = self.stereo.isChecked()
+        params.replace_stereo = self.stereo.isChecked()
         params.endings = []
         for e, v in zip(self.endings, self.boxes):
             if v.isChecked():

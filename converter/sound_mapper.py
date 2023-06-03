@@ -144,8 +144,7 @@ def map_sound(movie, replaceStereo: bool = False, defaultLanguage="deu"):
 
 
 def stereo_strings(movie, source, target, language):
-
-    def createFilter(target, center=1, front=1, side=0.707, lfe=0.5):
+    def createFilter(target, center=1, front=1, side=0.707, lfe=0.0):
         filter_string = f'-filter:a:{target} "volume=3dB,pan=stereo'
         if movie.streamJson["streams"][
                 source +
@@ -172,6 +171,6 @@ def stereo_strings(movie, source, target, language):
     stereo = createMapString(source, target, filter_string)
 
     target += 1
-    filter_string = createFilter(target, center=1, front=0.5, side=0.3, lfe=0.3)
+    filter_string = createFilter(target, center=1, front=0.5, side=0.3, lfe=0.0)
     #center = createMapString(source, target, filter_string, title="Stereo Speak")
     return stereo  #, center

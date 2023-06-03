@@ -103,7 +103,6 @@ class MovieInfo(object):
         """
         interlace = ""
         for stream in self.streamJson["streams"]:
-            print(stream)
             if "codec_type" in stream and "video" in stream["codec_type"]:
                 if "field_order" in stream and \
                     stream["field_order"] in ("tt","bt","tb"):
