@@ -6,7 +6,7 @@ from PyQt6.QtWidgets import (QMainWindow, QMessageBox, QWidget, QTabWidget,
                              QLineEdit, QErrorMessage)
 from PyQt6.QtGui import QIntValidator
 
-from converter.movie_utils import MovieOpts
+from converter.parameters import Parameters
 from converter.main import execute
 from gui.file_chooser import FileChooser
 import threading
@@ -45,11 +45,11 @@ class App(QMainWindow):
 
 
 class Gui(QWidget):
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
         self.initUI()
 
-    def initUI(self):
+    def initUI(self) -> None:
         tab = QTabWidget()
         t1 = QWidget()
         t1.setLayout(self.initSettings())
@@ -65,7 +65,7 @@ class Gui(QWidget):
 
         self.setLayout(layout)
 
-    def initStartQuit(self):
+    def initStartQuit(self) -> "QHBoxLayout":
         hbox = QHBoxLayout()
         hbox.addStretch(1)
         sbtn = QPushButton("Start")
@@ -76,7 +76,7 @@ class Gui(QWidget):
         hbox.addWidget(qbtn)
         return hbox
 
-    def initEndings(self):
+    def initEndings(self) -> "QVBoxLayout":
         self.endings = [".mkv", ".ts", ".mp4", ".mov", ".avi"]
         self.boxes = []
         vbox = QVBoxLayout()
@@ -86,7 +86,7 @@ class Gui(QWidget):
             self.boxes[-1].setChecked(e == ".mkv" or e == ".ts")
         return vbox
 
-    def initSettings(self):
+    def initSettings(self) -> None:
         vbox = QVBoxLayout()
         # vbox.addStretch(1)
 
@@ -116,6 +116,8 @@ class Gui(QWidget):
         self.stereo = QCheckBox("Add only stereo track")
         hbox.addWidget(self.stereo)
         vbox.addLayout(hbox)
+        self.keep_audio = QCheckBox("Keep audio tracks")
+        hbox.addWidget(self.keep_audio)
         hbox.addStretch(1)
 
         hbox = QHBoxLayout()
@@ -133,13 +135,15 @@ class Gui(QWidget):
         hbox.addStretch(1)
         return vbox
 
-    def parseConfig(self):
-        params = MovieOpts()
+    def parseConfig(self) -> None:
+        params = Parameters()
         params.quality = self.line.text()
         params.preset = self.preset.currentText()
         params.delete_files = self.delete.isChecked()
         params.shutdown = self.shutdown.isChecked()
-        params.replace_stereo = self.stereo.isChecked()
+        params.keep_audio = self.keep_audio.isChecked()
+        params.replace_stereo = self.stereo.isChecked(
+        ) and not params.keep_audio
         params.endings = []
         for e, v in zip(self.endings, self.boxes):
             if v.isChecked():
@@ -160,7 +164,7 @@ class Gui(QWidget):
             thread.start()
             # execute(file_path, target_path, params)
 
-    def preparePresets(self):
+    def preparePresets(self) -> None:
         if "x" in self.enc.currentText():
             options = ["slow", "medium", "fast"]
         else:

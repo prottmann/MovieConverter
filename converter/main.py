@@ -9,7 +9,7 @@ from converter.cropper import Cropper
 import matplotlib.pyplot as plt
 
 
-def execute(file_path, target_path, params):
+def execute(file_path, target_path, params) -> None:
     movies = get_movies(file_path, target_path, params.endings)
 
     for movie in movies:
@@ -27,9 +27,14 @@ def execute(file_path, target_path, params):
 
 
 if __name__ == "__main__":
-    from converter.movie_utils import MovieOpts
+    from converter.parameters import Parameters
     from gui.file_chooser import FileChooser
     from PyQt6.QtWidgets import QApplication
-    params = MovieOpts()
+    params = Parameters()
+    params.detect_logo = True
     app = QApplication(sys.argv)
-    w = FileChooser(params)
+    #source, target = FileChooser().getPaths()
+    source = "/mnt/c/Users/peter/Desktop/test"
+    target = "/mnt/c/Users/peter/Desktop"
+    #w = FileChooser(params)
+    execute(source, target, params)

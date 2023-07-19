@@ -15,11 +15,11 @@ def map_sound(movie, replaceStereo: bool = False, defaultLanguage="deu"):
         defaultLanguage = sprachen[0]
 
     command = None
-    types = []
-    languages = []
-    idx = []
-    channels = []
-    sprache = []
+    types_l = []
+    languages_l = []
+    idx_l = []
+    channels_l = []
+    sprache_l = []
 
     for stream in movie.streamJson["streams"]:
         codec_type = stream["codec_type"]
@@ -31,43 +31,43 @@ def map_sound(movie, replaceStereo: bool = False, defaultLanguage="deu"):
                 tags = stream["tags"]
 
                 if "language" in tags:
-                    languages.append(tags["language"])
+                    languages_l.append(tags["language"])
                 else:
-                    languages.append(defaultLanguage)
+                    languages_l.append(defaultLanguage)
 
             else:
-                languages.append(defaultLanguage)
+                languages_l.append(defaultLanguage)
 
         else:
 
             if "tags" in stream and "language" in stream["tags"]:
-                languages.append(stream["tags"]["language"])
+                languages_l.append(stream["tags"]["language"])
             else:
-                languages.append("")
+                languages_l.append("")
                 print("Empty language added.")
                 #os.remove(json_filename)
                 #return "", True
-        types.append(codec_type)
+        types_l.append(codec_type)
 
-        if len(languages) == 1:
-            idx.append(0)
-        elif types[-1] == types[-2]:
-            idx.append(idx[-1] + 1)
+        if len(languages_l) == 1:
+            idx_l.append(0)
+        elif types_l[-1] == types_l[-2]:
+            idx_l.append(idx_l[-1] + 1)
         else:
-            idx.append(0)
+            idx_l.append(0)
 
         if "channels" in stream:
-            channels.append(stream["channels"])
+            channels_l.append(stream["channels"])
         else:
-            channels.append(0)
+            channels_l.append(0)
 
-        sprache.append(sprachen == languages[-1])
+        sprache_l.append(sprachen == languages_l[-1])
 
-    sprache = np.asarray(sprache)
-    types = np.asarray(types)
-    languages = np.asarray(languages)
-    idx = np.asarray(idx)
-    channels = np.asarray(channels)
+    sprache = np.asarray(sprache_l)
+    types = np.asarray(types_l)
+    languages = np.asarray(languages_l)
+    idx = np.asarray(idx_l)
+    channels = np.asarray(channels_l)
     keep_languages = np.sum(sprache, axis=1) == 1
     #print(sprache, types, languages, idx, channels, keep_languages)
 
