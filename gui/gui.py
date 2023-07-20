@@ -109,6 +109,8 @@ class Gui(QWidget):
         self.delete = QCheckBox("Delete original file")
         self.delete.setChecked(True)
         hbox.addWidget(self.delete)
+        self.detect_logo = QCheckBox("Delete logo")
+        hbox.addWidget(self.detect_logo)
         vbox.addLayout(hbox)
         hbox.addStretch(1)
 
@@ -140,6 +142,7 @@ class Gui(QWidget):
         params.quality = self.line.text()
         params.preset = self.preset.currentText()
         params.delete_files = self.delete.isChecked()
+        params.detect_logo = self.detect_logo.isChecked()
         params.shutdown = self.shutdown.isChecked()
         params.keep_audio = self.keep_audio.isChecked()
         params.replace_stereo = self.stereo.isChecked(

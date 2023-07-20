@@ -75,9 +75,9 @@ class Cropper(object):
             success, image = vidcap.read()
         f = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
-        if self.params.detect_logo:
-            A = np.zeros(f.shape)
-            Q = np.zeros(f.shape)
+        #if self.params.detect_logo:
+        A = np.zeros(f.shape)
+        Q = np.zeros(f.shape)
 
         count = 1
         while success:
@@ -86,10 +86,10 @@ class Cropper(object):
                 break
             frame = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
-            if self.params.detect_logo:
-                A_new = A + (frame - A) / count
-                Q = Q + (frame - A) * (frame - A_new)
-                A = A_new
+            #if self.params.detect_logo:
+            A_new = A + (frame - A) / count
+            Q = Q + (frame - A) * (frame - A_new)
+            A = A_new
 
             #f = f + frame
             count += 1
@@ -100,8 +100,8 @@ class Cropper(object):
 
         #self.f = f / f.max()
 
+        self.std_img = Q / count  #Q.max()
         if self.params.detect_logo:
-            self.std_img = Q / count  #Q.max()
             self.crop = self.detect_logo()
         else:
             self.crop = None
@@ -225,8 +225,8 @@ class Cropper(object):
                 continue
 
         label = labels > 0
-        plt.imshow(label)
-        plt.show()
+        #plt.imshow(label)
+        #plt.show()
 
         objs = ndimage.find_objects(labels)
         logo_box = []
@@ -254,22 +254,22 @@ class Cropper(object):
             (logo_box[:, 0] + logo_box[:, 2]).max() - logo_box[:, 0].min(),
             (logo_box[:, 1] + logo_box[:, 3]).max() - logo_box[:, 1].min()
         ])
-        fig, ax = plt.subplots(1)
-        plt.imshow(labels)
-        rect = patches.Rectangle((self.logo_coords[1], self.logo_coords[0]),
-                                 height=self.logo_coords[2],
-                                 width=self.logo_coords[3],
-                                 linewidth=1,
-                                 edgecolor='r')
-        ax.add_patch(rect)
-        plt.show()
+        #fig, ax = plt.subplots(1)
+        #plt.imshow(labels)
+        #rect = patches.Rectangle((self.logo_coords[1], self.logo_coords[0]),
+        #                         height=self.logo_coords[2],
+        #                         width=self.logo_coords[3],
+        #                         linewidth=1,
+        #                         edgecolor='r')
+        #ax.add_patch(rect)
+        #plt.show()
         patch = labels[self.logo_coords[0]:self.logo_coords[0] +
                        self.logo_coords[2],
                        self.logo_coords[1]:self.logo_coords[1] +
                        self.logo_coords[3]]
         plt.imshow(patch)
         plt.show()
-        pdb.set_trace()
+        #pdb.set_trace()
         logo_name = ""
         #logo_name = input("Enter logo name for new database entry: ")
         return DataBaseEntry(img_size=labels.shape,
