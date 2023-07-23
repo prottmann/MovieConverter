@@ -69,8 +69,8 @@ class MovieInfo(object):
         logo_filter = ""
 
         if self.crop.logo_box is not None:
-            bonus = 2
-            self.crop.logo_box = self.crop.logo_box + 2 * np.array(
+            bonus = 4
+            self.crop.logo_box = self.crop.logo_box + bonus * np.array(
                 [-1, -1, 2, 2])
             logo_filter = f"delogo=x={self.crop.logo_box[1]}:y={self.crop.logo_box[0]}:" +\
                 f"w={self.crop.logo_box[3]}:h={self.crop.logo_box[2]},"

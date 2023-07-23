@@ -206,10 +206,10 @@ class Cropper(object):
         pdb.set_trace()
 
     def detect_new_logo(self) -> "DataBaseEntry":
-        l = self.std_img < 1000
+        l = self.std_img < 5000
 
-        # No logo in bottom half
-        l[l.shape[0] // 2:, :] = 0
+        # Logo only in top third
+        l[l.shape[0] // 3:, :] = 0
 
         labels = measure.label(l.astype(int))
         for i in range(1, labels.max() + 1):
@@ -225,8 +225,8 @@ class Cropper(object):
                 continue
 
         label = labels > 0
-        #plt.imshow(label)
-        #plt.show()
+        plt.imshow(label)
+        plt.show()
 
         objs = ndimage.find_objects(labels)
         logo_box = []
@@ -269,7 +269,7 @@ class Cropper(object):
                        self.logo_coords[3]]
         plt.imshow(patch)
         plt.show()
-        #pdb.set_trace()
+        pdb.set_trace()
         logo_name = ""
         #logo_name = input("Enter logo name for new database entry: ")
         return DataBaseEntry(img_size=labels.shape,
